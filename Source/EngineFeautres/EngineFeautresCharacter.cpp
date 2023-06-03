@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "EngineFeautresCharacter.h"
+
+#include "EFObjectStore.h"
+#include "EngineFeautres.h"
 #include "EngineFeautresProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -107,4 +110,16 @@ void AEngineFeautresCharacter::SetHasRifle(bool bNewHasRifle)
 bool AEngineFeautresCharacter::GetHasRifle()
 {
 	return bHasRifle;
+}
+
+void AEngineFeautresCharacter::CreateSmartPointers()
+{
+	NativeObjectVar = MakeShareable(new FEFNativeObject());
+
+	GetGameInstance()->GetSubsystem<UEFObjectStore>()->ReferenceToSmartObject = NativeObjectVar;
+}
+
+void AEngineFeautresCharacter::Suicide()
+{
+	Destroy();
 }

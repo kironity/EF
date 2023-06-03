@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Tests/NativeTests/EFSmartPonters.h"
 #include "EngineFeautresCharacter.generated.h"
 
 class UInputComponent;
@@ -63,6 +64,15 @@ public:
 	/** Getter for the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
+
+	UFUNCTION(BlueprintCallable, Category = "Player") 
+	void CreateSmartPointers();
+	
+	UFUNCTION(BlueprintCallable, Category = "Player") 
+	void Suicide();
+
+	TSharedPtr<FEFNativeObject> NativeObjectVar;
+
 
 protected:
 	/** Called for movement input */
