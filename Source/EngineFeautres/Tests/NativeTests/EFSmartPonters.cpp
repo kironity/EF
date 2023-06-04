@@ -7,7 +7,7 @@
 
 FEFNativeObject::FEFNativeObject()
 {
-	CharacterNames.Add("Dmitriy", "Vladimir", "Valentin"); 
+	CharacterNames.Add("D"); 
 	UE_LOG(LogEngineFeatures, Log, TEXT("Smart pointer created - %s"), *ObjectName.ToString());
 }
 

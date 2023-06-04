@@ -10,6 +10,8 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "StatSystem/Public/StatComponent.h"
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,8 @@ AEngineFeautresCharacter::AEngineFeautresCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-
+	
+	PlayerStat = CreateDefaultSubobject<UStatComponent>(TEXT("PlayerStat"));
 }
 
 void AEngineFeautresCharacter::BeginPlay()

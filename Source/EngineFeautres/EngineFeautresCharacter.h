@@ -8,6 +8,7 @@
 #include "Tests/NativeTests/EFSmartPonters.h"
 #include "EngineFeautresCharacter.generated.h"
 
+class UStatComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
 class USceneComponent;
@@ -39,8 +40,10 @@ class AEngineFeautresCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
-
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UStatComponent* PlayerStat;
+
 public:
 	AEngineFeautresCharacter();
 
