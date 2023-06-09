@@ -2,6 +2,7 @@
 
 #include "EngineFeautresCharacter.h"
 
+#include "EFBasicObject.h"
 #include "EFObjectStore.h"
 #include "EngineFeautres.h"
 #include "EngineFeautresProjectile.h"
@@ -10,21 +11,27 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Core/EFWorldStateManager.h"
 #include "StatSystem/Public/StatComponent.h"
-
+#include "Types/FWorldSaveData.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 // AEngineFeautresCharacter
 
+void AEngineFeautresCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+}
+
 AEngineFeautresCharacter::AEngineFeautresCharacter()
 {
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
-	
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -39,7 +46,7 @@ AEngineFeautresCharacter::AEngineFeautresCharacter()
 	Mesh1P->CastShadow = false;
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-	
+
 	PlayerStat = CreateDefaultSubobject<UStatComponent>(TEXT("PlayerStat"));
 }
 
@@ -51,16 +58,24 @@ void AEngineFeautresCharacter::BeginPlay()
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
+	UEFBasicObject* SomeObject = NewObject<UEFBasicObject>(GetTransientPackage(), UEFBasicObject::StaticClass());
+	
+	WeakObjectPtr = SomeObject;
+	if (WeakObjectPtr.Get())
+	{
+		BasicObjects.Add(WeakObjectPtr.Get());
+		UE_LOG(LogTemp, Warning, TEXT("Weak gun valid"));
+	}
+	FGuid();
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
-
 void AEngineFeautresCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -125,4 +140,26 @@ void AEngineFeautresCharacter::CreateSmartPointers()
 void AEngineFeautresCharacter::Suicide()
 {
 	Destroy();
+}
+
+void AEngineFeautresCharacter::SaveGame()
+{
+	if (AEFWorldStateManager* WorldStateManager = GetGameInstance()->GetSubsystem<UEFObjectStore>()->WorldStateManager.Get())
+	{
+		WorldStateManager->SaveWorld();
+	}
+}
+
+void AEngineFeautresCharacter::GetSaveData(FWorldSaveData& SaveData)
+{
+	SaveData.PlayerSaveData.PlayerLocation = GetActorLocation();
+	SaveData.PlayerSaveData.Healths = PlayerStat->GetCurrentValue();
+}
+
+void AEngineFeautresCharacter::LoadSaveData(const FWorldSaveData& LoadData)
+{
+	const FVector NewActorLocation = LoadData.PlayerSaveData.PlayerLocation;
+	TeleportTo(NewActorLocation, GetActorRotation());
+	const float NewHealth = LoadData.PlayerSaveData.Healths;
+	PlayerStat->SetValue(NewHealth);
 }

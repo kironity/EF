@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EFSaveLoadInterface.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "Tests/NativeTests/EFSmartPonters.h"
 #include "EngineFeautresCharacter.generated.h"
 
+class UEFBasicObject;
 class UStatComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
@@ -17,7 +19,7 @@ class UAnimMontage;
 class USoundBase;
 
 UCLASS(config=Game)
-class AEngineFeautresCharacter : public ACharacter
+class AEngineFeautresCharacter : public ACharacter, public IEFSaveLoadInterface
 {
 	GENERATED_BODY()
 
@@ -43,7 +45,13 @@ class AEngineFeautresCharacter : public ACharacter
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UStatComponent* PlayerStat;
+	
+	FWeakObjectPtr WeakGun;
+	TWeakObjectPtr<UEFBasicObject> WeakObjectPtr;
+	
+	TArray<UEFBasicObject*> BasicObjects;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	AEngineFeautresCharacter();
 
@@ -75,7 +83,12 @@ public:
 	void Suicide();
 
 	TSharedPtr<FEFNativeObject> NativeObjectVar;
-
+	
+	UFUNCTION(BlueprintCallable)
+	void SaveGame();
+	
+	virtual void GetSaveData(FWorldSaveData& SaveData) override;
+	virtual void LoadSaveData(const FWorldSaveData& LoadData) override;
 
 protected:
 	/** Called for movement input */
