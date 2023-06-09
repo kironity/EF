@@ -29,5 +29,7 @@ public:
 	TSharedPtr<UEFBasicObject> WeakObjectPtr;
 	
 	TWeakObjectPtr<AEFTechManager> TechManagerClass;
+	
+	UPROPERTY(BlueprintReadOnly)
 	TWeakObjectPtr<AEFWorldStateManager> WorldStateManager;
 };

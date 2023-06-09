@@ -20,16 +20,15 @@ public:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<AEFWorldStateManager> WorldStateManager;
+	
 	virtual void PostInitializeComponents() override;
 
+	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 
 	void InitWorldLoader();
 
 	void LoadWorld();
-
-	virtual void RestartPlayer(AController* NewPlayer) override;
-	virtual void RestartPlayerAtTransform(AController* NewPlayer, const FTransform& SpawnTransform) override;
 };
 
 

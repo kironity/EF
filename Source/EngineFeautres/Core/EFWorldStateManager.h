@@ -23,7 +23,15 @@ public:
 
 	virtual void SaveWorld();
 
-	virtual void LoadWorld(); 
+	virtual void LoadWorld();
+	UFUNCTION(BlueprintCallable)
+	virtual void RegisterItem(AActor* Item);
+	
+	UFUNCTION(BlueprintCallable)
+	virtual void UnRegisterItem(AActor* Item);
+	
+	UPROPERTY()
+	TSet<AActor*> RegisteredActors;
 
 protected:
 	virtual void BeginPlay() override;

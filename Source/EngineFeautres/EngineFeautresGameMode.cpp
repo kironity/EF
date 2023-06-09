@@ -21,6 +21,12 @@ void AEngineFeautresGameMode::PostInitializeComponents()
 	UE_LOG(LogTemp, Warning, TEXT("PreInitializeComponents called "));
 }
 
+void AEngineFeautresGameMode::StartPlay()
+{
+	Super::StartPlay();
+	WorldStateManager->LoadWorld();
+}
+
 void AEngineFeautresGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -35,19 +41,5 @@ void AEngineFeautresGameMode::InitWorldLoader()
 void AEngineFeautresGameMode::LoadWorld()
 {
 	check(WorldStateManager)
-	WorldStateManager->LoadWorld();
-}
-
-void AEngineFeautresGameMode::RestartPlayer(AController* NewPlayer)
-{
-	Super::RestartPlayer(NewPlayer);
-	UE_LOG(LogTemp, Warning, TEXT("Restart player called "));
-	LoadWorld();
-}
-
-void AEngineFeautresGameMode::RestartPlayerAtTransform(AController* NewPlayer, const FTransform& SpawnTransform)
-{
-	Super::RestartPlayerAtTransform(NewPlayer, SpawnTransform);
-	UE_LOG(LogTemp, Warning, TEXT("Restart player at transform called "));
 	WorldStateManager->LoadWorld();
 }

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "FDynamicDroppedItems.h"
 #include "FPlayerSaveData.h"
 #include "FTechSaveData.h"
 #include "FWorldSaveData.generated.h"
@@ -16,10 +17,16 @@ public:
 	UPROPERTY()
 	FTechSaveData TechSaveData;
 
+	UPROPERTY()
+	TArray<FDynamicDroppedItems> DroppedItems;
+
 	FWorldSaveData() : PlayerSaveData(FPlayerSaveData()), TechSaveData(FTechSaveData())
 	{
 	}
-	FWorldSaveData(const FWorldSaveData& WorldSaveData): PlayerSaveData(WorldSaveData.PlayerSaveData), TechSaveData(WorldSaveData.TechSaveData)
+	FWorldSaveData(const FWorldSaveData& WorldSaveData):
+					PlayerSaveData(WorldSaveData.PlayerSaveData),
+					TechSaveData(WorldSaveData.TechSaveData),
+					DroppedItems(WorldSaveData.DroppedItems)
 	{
 	}
 };

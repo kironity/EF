@@ -10,6 +10,8 @@
 #include "Types/FWorldSaveData.h"
 #include "EFSaveLoadInterface.h"
 #include "EFTechManager.h"
+#include "EngineUtils.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 AEFWorldStateManager::AEFWorldStateManager()
 {
@@ -52,6 +54,22 @@ void AEFWorldStateManager::SaveWorld()
 			SaveLoadInterface->GetSaveData(WorldSaveData);
 		}
 	}
+
+	for (auto It = RegisteredActors.CreateIterator(); It; ++It)
+	{
+		if (AActor* Actor = *It)
+		{
+			FDynamicDroppedItems DroppedItem;
+			DroppedItem.ActorClass = Actor->GetClass();
+			DroppedItem.ActorTransform = Actor->GetActorTransform();
+			FMemoryWriter MemoryWriter(DroppedItem.ByteArray);
+			FObjectAndNameAsStringProxyArchive ProxyArchive(MemoryWriter, true);
+
+			ProxyArchive.ArIsSaveGame = true;
+			Actor->Serialize(ProxyArchive);
+			WorldSaveData.DroppedItems.Add(DroppedItem);
+		}
+	}
 	SaveGameSlot->WorldSaveData = WorldSaveData;
 	UGameplayStatics::SaveGameToSlot(SaveGameSlot, "FirstSave", 0);
 }
@@ -85,4 +103,40 @@ void AEFWorldStateManager::LoadWorld()
 			LoadInterface->LoadSaveData(WorldSaveData);
 		}
 	}
+
+	for (auto& DroppedItem : WorldSaveData.DroppedItems)
+	{
+		if (DroppedItem.ActorClass)
+		{
+			FActorSpawnParameters SpawnParameters;
+			if (AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(DroppedItem.ActorClass, DroppedItem.ActorTransform, SpawnParameters))
+			{
+				FMemoryReader MemoryReader(DroppedItem.ByteArray);
+
+				FObjectAndNameAsStringProxyArchive ProxyArchive(MemoryReader, true);
+				ProxyArchive.ArIsSaveGame = true;
+				ProxyArchive.Seek(0);
+				
+				if (ProxyArchive.IsLoading())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Loading "))
+				}
+				else if (ProxyArchive.IsSaving())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Saving"))
+				}
+				SpawnedActor->Serialize(ProxyArchive);
+			}
+		}
+	}
+}
+
+void AEFWorldStateManager::RegisterItem(AActor* Item)
+{
+	RegisteredActors.Add(Item);
+}
+
+void AEFWorldStateManager::UnRegisterItem(AActor* Item)
+{
+	RegisteredActors.Remove(Item);
 }
