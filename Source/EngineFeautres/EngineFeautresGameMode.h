@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "EngineFeautresGameMode.generated.h"
 
+class UEFSignificanceManager;
 class AEFWorldStateManager;
 UCLASS(minimalapi)
 class AEngineFeautresGameMode : public AGameModeBase
@@ -20,6 +21,9 @@ public:
 	
 	UPROPERTY(Transient)
 	TObjectPtr<AEFWorldStateManager> WorldStateManager;
+	
+	UPROPERTY(EditAnywhere, NoClear, BlueprintReadOnly, Category=Classes)
+	TSubclassOf<UEFSignificanceManager> SignificanceManager;
 	
 	virtual void PostInitializeComponents() override;
 

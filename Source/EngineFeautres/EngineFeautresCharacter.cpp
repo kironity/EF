@@ -11,6 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "SignificanceManager.h"
 #include "Core/EFWorldStateManager.h"
 #include "StatSystem/Public/StatComponent.h"
 #include "Types/FWorldSaveData.h"
@@ -64,13 +65,26 @@ void AEngineFeautresCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	USignificanceManager* SignificanceManager = USignificanceManager::Get(GetWorld());
+	if (SignificanceManager)
+	{
+		USignificanceManager::FManagedObjectSignificanceFunction Callback = [](USignificanceManager::FManagedObjectInfo* Info, const FTransform& Transform)->float
+		{
+			if (Info->GetTag() == FName("MainPlayer"))
+			{
+				return 1.f;
+			}
+			return -1.f;
+		};
+		SignificanceManager->RegisterObject(this, FName("MainPlayer"), Callback);
+	}
 	UEFBasicObject* SomeObject = NewObject<UEFBasicObject>(GetTransientPackage(), UEFBasicObject::StaticClass());
-	
+
 	WeakObjectPtr = SomeObject;
 	if (WeakObjectPtr.Get())
 	{
 		BasicObjects.Add(WeakObjectPtr.Get());
-		UE_LOG(LogTemp, Warning, TEXT("Weak gun valid"));
+		UE_LOG(LogTemp, Log, TEXT("Weak gun valid"));
 	}
 	FGuid();
 }
@@ -91,6 +105,11 @@ void AEngineFeautresCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEngineFeautresCharacter::Look);
 	}
+}
+
+float AEngineFeautresCharacter::CalcSignificanse()
+{
+	return 0.f;
 }
 
 
@@ -144,7 +163,8 @@ void AEngineFeautresCharacter::Suicide()
 
 void AEngineFeautresCharacter::SaveGame()
 {
-	if (AEFWorldStateManager* WorldStateManager = GetGameInstance()->GetSubsystem<UEFObjectStore>()->WorldStateManager.Get())
+	if (AEFWorldStateManager* WorldStateManager = GetGameInstance()->GetSubsystem<UEFObjectStore>()->WorldStateManager.
+	                                                                 Get())
 	{
 		WorldStateManager->SaveWorld();
 	}

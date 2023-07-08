@@ -3,6 +3,7 @@
 #include "EngineFeautresGameMode.h"
 #include "EngineFeautresCharacter.h"
 #include "Core/EFWorldStateManager.h"
+#include "Optimizitaion/EFSignificanceManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 AEngineFeautresGameMode::AEngineFeautresGameMode()
@@ -12,6 +13,7 @@ AEngineFeautresGameMode::AEngineFeautresGameMode()
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonCharacter"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 	WorldLoader = AEFWorldStateManager::StaticClass();
+	SignificanceManager = UEFSignificanceManager::StaticClass();
 }
 
 void AEngineFeautresGameMode::PostInitializeComponents()

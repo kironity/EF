@@ -9,7 +9,7 @@ public class EngineFeautres : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[]
-			{ "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "StatSystem" });
+			{ "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "StatSystem", "GameplayDebugger", "SignificanceManager" });
 		PublicIncludePaths.AddRange(new string[]
 			{ "EngineFeautres" });
 	}

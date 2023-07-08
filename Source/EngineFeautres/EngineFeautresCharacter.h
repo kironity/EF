@@ -19,7 +19,7 @@ class UAnimMontage;
 class USoundBase;
 
 UCLASS(config=Game)
-class AEngineFeautresCharacter : public ACharacter, public IEFSaveLoadInterface
+class ENGINEFEAUTRES_API AEngineFeautresCharacter : public ACharacter, public IEFSaveLoadInterface
 {
 	GENERATED_BODY()
 
@@ -59,7 +59,7 @@ protected:
 	virtual void BeginPlay();
 
 public:
-		
+	
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
@@ -107,7 +107,7 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
-
+	
+	float CalcSignificanse();
 };
 
